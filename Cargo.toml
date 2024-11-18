@@ -1,0 +1,12 @@
+[workspace.package]
+edition = "2021"
+
+[workspace]
+resolver = "2"
+members = [
+    "server",
+    "client"
+]
+
+[workspace.dependencies]
+tokio = { version = "1.41.0", features = ["full"]}
