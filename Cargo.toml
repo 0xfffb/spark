@@ -5,7 +5,8 @@ edition = "2021"
 resolver = "2"
 members = [
     "server",
-    "client"
+    "client",
+    "pigeon"
 ]
 
 [workspace.dependencies]
