@@ -26,6 +26,7 @@ async fn main() {
     let (mut stream, socket_addr) = listener.accept().await.unwrap();
 
     let (mut reader, mut writer) = tokio::io::split(stream);
+    let (send, mut recv) = tokio::sync::mpsc::channel(512);
 
     tokio::spawn(async move {
         loop {
@@ -33,12 +34,18 @@ async fn main() {
             let i = reader.read(&mut buffer).await.unwrap();
             let message = String::from_utf8_lossy(&buffer[0..i]);
             println!("client message: {}", message);
+            send.send(message.into_owned()).await.unwrap();
         }
     });
 
     tokio::spawn(async move {
         loop {
-            writer.write_all("test".as_bytes()).await.unwrap();
+            match recv.recv().await {
+                Some(r) => {
+                    writer.write_all(r.as_bytes()).await.unwrap();
+                }
+                _ => {}
+            }
         }
     });
 
